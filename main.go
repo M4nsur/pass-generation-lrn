@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math/rand/v2"
+	"net/url"
 )
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
@@ -25,15 +27,26 @@ func (acc *account) generatePassword(n int)  {
 	acc.password = string(pass)
 }
 
+func newAccount(login, urlValue string) (*account, error) {
+	_, err := url.ParseRequestURI(urlValue)
+	if err != nil {
+		return nil, errors.New("Invalid url")
+	}
+	return &account{
+		login: login,
+		url: urlValue,
+	}, nil
+}
+
 func main () {
 	login := promptData("Введите логин")
 	url := promptData("Введите url")
 
-	myAcc := account{
-		login: login,
-		url: url,
+	myAcc, err := newAccount(login, url)
+	if err != nil {
+		fmt.Println("Неверный url")
+		return
 	}
-
 	myAcc.generatePassword(15)
 	myAcc.printAccount()
 
