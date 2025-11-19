@@ -27,27 +27,39 @@ func (acc *account) generatePassword(n int)  {
 	acc.password = string(pass)
 }
 
-func newAccount(login, urlValue string) (*account, error) {
+func newAccount(login, password, urlValue string) (*account, error) {
+
+	if len([]rune(login)) == 0 {
+		return nil, errors.New("invalid login")
+	}
 	_, err := url.ParseRequestURI(urlValue)
 	if err != nil {
 		return nil, errors.New("Invalid url")
 	}
-	return &account{
+
+	acc := &account{
 		login: login,
+		password: password,
 		url: urlValue,
-	}, nil
-}
+		}
+	if len([]rune(password)) == 0 {
+		acc.generatePassword(15)
+	}
+	return acc, nil
+	}
+
 
 func main () {
 	login := promptData("Введите логин")
+	password := promptData("Введите пароль")
 	url := promptData("Введите url")
 
-	myAcc, err := newAccount(login, url)
+	myAcc, err := newAccount(login, password, url)
 	if err != nil {
 		fmt.Println("Неверный url")
 		return
 	}
-	myAcc.generatePassword(15)
+
 	myAcc.printAccount()
 
 }
@@ -55,6 +67,6 @@ func main () {
 func promptData (message string) string {
 	var res string
 	fmt.Println(message)
-	fmt.Scan(&res)
+	fmt.Scanln(&res)
 	return res
 }
