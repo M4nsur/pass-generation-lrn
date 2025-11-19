@@ -29,7 +29,7 @@ func (acc *account) generatePassword(n int)  {
 
 func newAccount(login, password, urlValue string) (*account, error) {
 
-	if len([]rune(login)) == 0 {
+	if login == "" {
 		return nil, errors.New("invalid login")
 	}
 	_, err := url.ParseRequestURI(urlValue)
@@ -42,7 +42,7 @@ func newAccount(login, password, urlValue string) (*account, error) {
 		password: password,
 		url: urlValue,
 		}
-	if len([]rune(password)) == 0 {
+	if password == "" {
 		acc.generatePassword(15)
 	}
 	return acc, nil
