@@ -9,8 +9,11 @@ import (
 
 
 func main () {
-	files.ReadFile()
-	files.WriteFile("тест данные1", "file.txt")
+	createAccount()
+}
+
+func createAccount () {
+	// files.ReadFile()
 	login := promptData("Введите логин")
 	password := promptData("Введите пароль")
 	url := promptData("Введите url")
@@ -21,8 +24,9 @@ func main () {
 		return
 	}
 
-	myAcc.PrintAccount()
 
+	accValue := account.ToBytes(myAcc)
+	files.WriteFile(accValue, "data.json")
 }
 
 func promptData (message string) string {
