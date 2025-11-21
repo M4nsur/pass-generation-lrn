@@ -2,7 +2,6 @@ package account
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math/rand/v2"
 	"net/url"
@@ -11,51 +10,65 @@ import (
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 type account struct {
-	Login string `json:"login"`
+	Login    string `json:"login"`
 	Password string `json:"password"`
-	Url string `json:"url"`
+	Url      string `json:"url"`
 }
 
 func (acc account) PrintAccount() {
 	fmt.Println(acc.Login, acc.Password, acc.Url)
 }
 
-func (acc *account) generatePassword(n int)  {
+func (acc *account) generatePassword(n int) {
 	var pass = make([]rune, n)
 	for i := range n {
 		pass[i] = letterRunes[rand.IntN(len(letterRunes))]
-
 	}
-	acc.Url = string(pass)
+	acc.Password = string(pass)
 }
 
+func NewAccount() ([]byte, error) {
+	login := promptData("Введите логин")
 
 
-func NewAccount(login, password, urlValue string) (*account, error) {
-	if login == "" {
-		return nil, errors.New("invalid login")
-	}
+	password := promptData("Введите пароль (оставьте пустым для автогенерации)")
+
+	urlValue := promptData("Введите url")
 	_, err := url.ParseRequestURI(urlValue)
 	if err != nil {
-		return nil, errors.New("Invalid url")
+		return nil, fmt.Errorf("неверный URL: %w", err)
 	}
 
 	acc := &account{
-		Login: login,
+		Login:    login,
 		Password: password,
-		Url: urlValue,
-		}
+		Url:      urlValue,
+	}
+
 	if password == "" {
 		acc.generatePassword(15)
-	}
-	return acc, nil
+		fmt.Printf("Сгенерирован пароль: %s\n", acc.Password)
 	}
 
-
-func ToBytes (acc *account) []byte {
-	file, err := json.Marshal(acc) 
+	file, err := ToBytes(acc)
 	if err != nil {
-		fmt.Println(err)
+		return nil, fmt.Errorf("ошибка: %w", err)
 	}
-	return file
+
+	return file, nil
+}
+
+func ToBytes(acc *account) ([]byte, error) {
+	file, err := json.Marshal(acc)
+	if err != nil {
+		return nil, err
+	}
+	return file, nil
+}
+
+func promptData (message string) string {
+	var res string
+	fmt.Println(message)
+	fmt.Scanln(&res)
+	return res
 }

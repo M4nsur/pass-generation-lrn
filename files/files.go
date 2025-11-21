@@ -1,33 +1,28 @@
 package files
 
 import (
-	"fmt"
 	"os"
 )
 
-func ReadFile() {
-	data, err := os.ReadFile("data.json")
-	if (err != nil) {
-		fmt.Println(err)
-		return
-	}
-	
-	fmt.Println(string(data))
+func ReadFile(name string) ([]byte, error) {
+    data, err := os.ReadFile(name)
+    if err != nil {
+        return nil, err
+    }
+    return data, nil
 }
 
-func WriteFile(content []byte, name string) {
-	file, err := os.Create(name)
-	if(err != nil) {
-		fmt.Println(err)
-	}
-
-	defer file.Close()
-	_, err = file.Write(content)
-
-	if(err != nil) {
-		return
-	}
-
-	fmt.Println("Done")
-
+func WriteFile(content []byte, name string) error {
+    file, err := os.Create(name)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    
+    _, err = file.Write(content)
+    if err != nil {
+        return err
+    }
+    
+    return nil
 }
