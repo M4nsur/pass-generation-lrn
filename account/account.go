@@ -1,10 +1,12 @@
 package account
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"math/rand/v2"
 	"net/url"
+	"strings"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -27,13 +29,11 @@ func (acc *account) generatePassword(n int) {
 	acc.Password = string(pass)
 }
 
-func NewAccount() ([]byte, error) {
-	login := promptData("Введите логин")
-
-
-	password := promptData("Введите пароль (оставьте пустым для автогенерации)")
-
-	urlValue := promptData("Введите url")
+func NewAccount(scanner *bufio.Scanner) ([]byte, error) {
+	login := promptDataWithScanner(scanner, "Введите логин")
+	password := promptDataWithScanner(scanner, "Введите пароль (оставьте пустым для автогенерации)")
+	urlValue := promptDataWithScanner(scanner, "Введите url")
+	
 	_, err := url.ParseRequestURI(urlValue)
 	if err != nil {
 		return nil, fmt.Errorf("неверный URL: %w", err)
@@ -66,9 +66,8 @@ func ToBytes(acc *account) ([]byte, error) {
 	return file, nil
 }
 
-func promptData (message string) string {
-	var res string
+func promptDataWithScanner(scanner *bufio.Scanner, message string) string {
 	fmt.Println(message)
-	fmt.Scanln(&res)
-	return res
+	scanner.Scan()
+	return strings.TrimSpace(scanner.Text())
 }
