@@ -2,11 +2,15 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/m4nsur/pass-generation-lrn/account"
+	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
 
 func main () {
+	files.ReadFile()
+	files.WriteFile("тест данные1", "file.txt")
 	login := promptData("Введите логин")
 	password := promptData("Введите пароль")
 	url := promptData("Введите url")
