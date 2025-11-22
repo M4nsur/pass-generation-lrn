@@ -1,9 +1,11 @@
 package account
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -13,8 +15,25 @@ type AccountsStorage struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func CreateAccountStorage () *AccountsStorage {
-	data, err := os.ReadFile("data.json")
+
+func (storage *AccountsStorage) FindAccount () {
+	println("Введите url для поиска")
+    scanner := bufio.NewScanner(os.Stdin)
+    scanner.Scan()             
+    url := scanner.Text()
+
+	for _, acc := range storage.Accounts {
+		isFound := strings.Contains(acc.Url, url)
+		if isFound {
+			fmt.Println(acc)
+		}
+	}
+
+}
+
+
+func CreateAccountStorage (storageName string) *AccountsStorage {
+	data, err := os.ReadFile(storageName)
 	if (err != nil) {
 		return &AccountsStorage{
 			Accounts: []account{},
@@ -29,7 +48,6 @@ func CreateAccountStorage () *AccountsStorage {
 	}
 
 	return &storage
-	
 }
 
 func ToBytes(acc *AccountsStorage) ([]byte, error) {
@@ -39,3 +57,4 @@ func ToBytes(acc *AccountsStorage) ([]byte, error) {
 	}
 	return file, nil
 }
+

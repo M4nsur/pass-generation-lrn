@@ -33,15 +33,15 @@ func (acc *account) generatePassword(n int) {
 	acc.Password = string(pass)
 }
 
-func NewAccount(scanner *bufio.Scanner) (error) {
+func NewAccount(scanner *bufio.Scanner, storage *AccountsStorage) (error) {
 	login := promptDataWithScanner(scanner, "Введите логин")
 	password := promptDataWithScanner(scanner, "Введите пароль (оставьте пустым для автогенерации)")
 	urlValue := promptDataWithScanner(scanner, "Введите url")
 	
 	_, err := url.ParseRequestURI(urlValue)
 	if err != nil {
-		 fmt.Errorf("неверный URL: %w", err)
-		 return err
+		fmt.Errorf("неверный URL: %w", err)
+		return err
 	}
 
 	acc := &account{
@@ -58,9 +58,10 @@ func NewAccount(scanner *bufio.Scanner) (error) {
 		fmt.Printf("Сгенерирован пароль: %s\n", acc.Password)
 	}
 
-	storage := CreateAccountStorage()
+
 
 	storage.Accounts = append(storage.Accounts, *acc)
+	storage.UpdatedAt = time.Now()
 	file, err := ToBytes(storage)
 	if err != nil {
 		return err

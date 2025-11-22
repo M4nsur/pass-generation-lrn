@@ -13,7 +13,8 @@ import (
 
 func RunMenu() {
 	scanner := bufio.NewScanner(os.Stdin)
-	
+	storage := account.CreateAccountStorage("data.json")
+
 	for {
 		showMenu()
 		scanner.Scan()
@@ -27,13 +28,13 @@ func RunMenu() {
 		
 		switch choice {
 		case 1:
-			err := account.NewAccount(scanner)
+			err := account.NewAccount(scanner, storage)
 			if err != nil {
 				fmt.Println(err)
 				continue
 			}
 		case 2:
-			files.ReadFile("data.json")
+			storage.FindAccount()
 		case 3:
 			files.ReadFile("data.json")
 		case 4:
