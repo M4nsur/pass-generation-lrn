@@ -1,1 +1,19 @@
-{"Accounts":[{"login":"xxxxxx","password":"UBinEIMjfCOZnA2","url":"https://www.google.com","createdAt":"2025-11-23T00:28:32.62038+03:00","updatedAt":"2025-11-23T00:28:32.62038+03:00"},{"login":"ccccc","password":"P5Utxu9V1Rt4vy6","url":"https://www.google3333.com","createdAt":"2025-11-23T00:35:14.39436+03:00","updatedAt":"2025-11-23T00:35:14.39436+03:00"},{"login":"pppppp","password":"iAdoG35ZqJ0H0yy","url":"https://www.x3333.com","createdAt":"2025-11-23T00:35:32.1107841+03:00","updatedAt":"2025-11-23T00:35:32.1107841+03:00"}],"updatedAt":"2025-11-23T00:35:32.1107841+03:00"}
+{
+  "Accounts": [
+    {
+      "login": "xxxxxx",
+      "password": "UBinEIMjfCOZnA2",
+      "url": "https://www.google.com",
+      "createdAt": "2025-11-23T00:28:32.62038+03:00",
+      "updatedAt": "2025-11-23T00:28:32.62038+03:00"
+    },
+    {
+      "login": "pppppp",
+      "password": "iAdoG35ZqJ0H0yy",
+      "url": "https://www.x3333.com",
+      "createdAt": "2025-11-23T00:35:32.1107841+03:00",
+      "updatedAt": "2025-11-23T00:35:32.1107841+03:00"
+    }
+  ],
+  "updatedAt": "2025-11-23T00:35:32.1107841+03:00"
+}

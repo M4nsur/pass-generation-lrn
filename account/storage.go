@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -16,19 +15,47 @@ type AccountsStorage struct {
 }
 
 
-func (storage *AccountsStorage) FindAccount () {
-	println("Введите url для поиска")
-    scanner := bufio.NewScanner(os.Stdin)
+func (storage *AccountsStorage) FindAccount() {
+	fmt.Println("Введите url для поиска")
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	url := scanner.Text()
+
+	for _, acc := range storage.Accounts {
+		if acc.Url == url {
+			fmt.Println("Найден аккаунт:", acc)
+			return
+		}
+	}
+	fmt.Println("Аккаунт не найден")
+}
+
+func (storage *AccountsStorage) DeleteAccount(storageName string)  {
+	fmt.Println("Введите url для удаления")
+	scanner := bufio.NewScanner(os.Stdin)
     scanner.Scan()             
     url := scanner.Text()
 
-	for _, acc := range storage.Accounts {
-		isFound := strings.Contains(acc.Url, url)
-		if isFound {
-			fmt.Println(acc)
-		}
+	for i, acc := range storage.Accounts {
+	    if acc.Url == url {  
+	        storage.Accounts = append(storage.Accounts[:i], storage.Accounts[i+1:]...)
+	        fmt.Println("Аккаунт удален:", acc)
+	        break  
+	    }
 	}
 
+	data, err := ToBytes(storage)
+	
+	if err != nil {
+		fmt.Println("Ошибка при сериализации:", err)
+		return
+	}
+
+	err = os.WriteFile(storageName, data, 0600)
+	if err != nil {
+		fmt.Println("Ошибка при сохранении:", err)
+		return
+	}
 }
 
 
@@ -46,7 +73,6 @@ func CreateAccountStorage (storageName string) *AccountsStorage {
 	if (err != nil) {
 		fmt.Println(err.Error())
 	}
-
 	return &storage
 }
 

@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/m4nsur/pass-generation-lrn/account"
-	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
 func RunMenu() {
@@ -36,7 +35,7 @@ func RunMenu() {
 		case 2:
 			storage.FindAccount()
 		case 3:
-			files.ReadFile("data.json")
+			storage.DeleteAccount("data.json")
 		case 4:
 			fmt.Println("Программа завершена")
 			return
