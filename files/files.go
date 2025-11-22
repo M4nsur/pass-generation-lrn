@@ -13,16 +13,5 @@ func ReadFile(name string) ([]byte, error) {
 }
 
 func WriteFile(content []byte, name string) error {
-    file, err := os.Create(name)
-    if err != nil {
-        return err
-    }
-    defer file.Close()
-    
-    _, err = file.Write(content)
-    if err != nil {
-        return err
-    }
-    
-    return nil
+    return os.WriteFile(name, content, 0600)  
 }

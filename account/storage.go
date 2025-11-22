@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
 
@@ -30,7 +32,7 @@ func (storage *AccountsStorage) FindAccount() {
 	fmt.Println("Аккаунт не найден")
 }
 
-func (storage *AccountsStorage) DeleteAccount(storageName string)  {
+func (storage *AccountsStorage) DeleteAccount(storageName string) error {
 	fmt.Println("Введите url для удаления")
 	scanner := bufio.NewScanner(os.Stdin)
     scanner.Scan()             
@@ -45,18 +47,19 @@ func (storage *AccountsStorage) DeleteAccount(storageName string)  {
 	}
 
 	data, err := ToBytes(storage)
-	
 	if err != nil {
 		fmt.Println("Ошибка при сериализации:", err)
-		return
+		return err
 	}
 
-	err = os.WriteFile(storageName, data, 0600)
+	err = files.WriteFile(data, storageName)
 	if err != nil {
 		fmt.Println("Ошибка при сохранении:", err)
-		return
+		return err
 	}
 }
+
+
 
 
 func CreateAccountStorage (storageName string) *AccountsStorage {

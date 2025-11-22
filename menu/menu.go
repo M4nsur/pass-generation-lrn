@@ -35,7 +35,11 @@ func RunMenu() {
 		case 2:
 			storage.FindAccount()
 		case 3:
-			storage.DeleteAccount("data.json")
+			err := storage.DeleteAccount("data.json")
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 		case 4:
 			fmt.Println("Программа завершена")
 			return
