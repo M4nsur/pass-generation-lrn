@@ -57,6 +57,8 @@ func (storage *AccountsStorage) DeleteAccount(storageName string) error {
 		fmt.Println("Ошибка при сохранении:", err)
 		return err
 	}
+
+	return nil
 }
 
 
