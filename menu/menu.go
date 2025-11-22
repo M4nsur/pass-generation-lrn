@@ -27,12 +27,11 @@ func RunMenu() {
 		
 		switch choice {
 		case 1:
-			myAcc, err := account.NewAccount(scanner)
+			err := account.NewAccount(scanner)
 			if err != nil {
 				fmt.Println(err)
-				break
+				continue
 			}
-			files.WriteFile(myAcc, "data.json")
 		case 2:
 			files.ReadFile("data.json")
 		case 3:

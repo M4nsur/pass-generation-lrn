@@ -2,11 +2,13 @@ package account
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"math/rand/v2"
 	"net/url"
 	"strings"
+	"time"
+
+	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -15,6 +17,8 @@ type account struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
 	Url      string `json:"url"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func (acc account) PrintAccount() {
@@ -29,20 +33,24 @@ func (acc *account) generatePassword(n int) {
 	acc.Password = string(pass)
 }
 
-func NewAccount(scanner *bufio.Scanner) ([]byte, error) {
+func NewAccount(scanner *bufio.Scanner) (error) {
 	login := promptDataWithScanner(scanner, "Введите логин")
 	password := promptDataWithScanner(scanner, "Введите пароль (оставьте пустым для автогенерации)")
 	urlValue := promptDataWithScanner(scanner, "Введите url")
 	
 	_, err := url.ParseRequestURI(urlValue)
 	if err != nil {
-		return nil, fmt.Errorf("неверный URL: %w", err)
+		 fmt.Errorf("неверный URL: %w", err)
+		 return err
 	}
 
 	acc := &account{
 		Login:    login,
 		Password: password,
 		Url:      urlValue,
+		CreatedAt: time.Now(),
+    	UpdatedAt: time.Now(),
+
 	}
 
 	if password == "" {
@@ -50,21 +58,18 @@ func NewAccount(scanner *bufio.Scanner) ([]byte, error) {
 		fmt.Printf("Сгенерирован пароль: %s\n", acc.Password)
 	}
 
-	file, err := ToBytes(acc)
+	storage := CreateAccountStorage()
+
+	storage.Accounts = append(storage.Accounts, *acc)
+	file, err := ToBytes(storage)
 	if err != nil {
-		return nil, fmt.Errorf("ошибка: %w", err)
+		return err
 	}
 
-	return file, nil
+	files.WriteFile(file, "data.json")
+	return nil
 }
 
-func ToBytes(acc *account) ([]byte, error) {
-	file, err := json.Marshal(acc)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
-}
 
 func promptDataWithScanner(scanner *bufio.Scanner, message string) string {
 	fmt.Println(message)
