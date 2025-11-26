@@ -1,5 +1,5 @@
 {
-  "Accounts": [
+  "accounts": [
     {
       "login": "xxxxxx",
       "password": "UBinEIMjfCOZnA2",
@@ -13,7 +13,14 @@
       "url": "https://www.x3333.com",
       "createdAt": "2025-11-23T00:35:32.1107841+03:00",
       "updatedAt": "2025-11-23T00:35:32.1107841+03:00"
+    },
+    {
+      "login": "cvzx",
+      "password": "pZkrylWjDosmHqy",
+      "url": "https://www.ppp.com",
+      "createdAt": "2025-11-23T02:05:08.8402795+03:00",
+      "updatedAt": "2025-11-23T02:05:08.8402795+03:00"
     }
   ],
-  "updatedAt": "2025-11-23T00:35:32.1107841+03:00"
+  "updatedAt": "2025-11-26T03:39:17.9223213+03:00"
 }

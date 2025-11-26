@@ -7,8 +7,6 @@ import (
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -33,14 +31,14 @@ func (acc *account) generatePassword(n int) {
 	acc.Password = string(pass)
 }
 
-func NewAccount(scanner *bufio.Scanner, storage *AccountsStorage) (error) {
+func NewAccount(scanner *bufio.Scanner, storage *Storage) (error) {
 	login := promptDataWithScanner(scanner, "Введите логин")
 	password := promptDataWithScanner(scanner, "Введите пароль (оставьте пустым для автогенерации)")
 	urlValue := promptDataWithScanner(scanner, "Введите url")
-	
+
 	_, err := url.ParseRequestURI(urlValue)
 	if err != nil {
-		fmt.Errorf("неверный URL: %w", err)
+		fmt.Println("неверный URL: %w", err)
 		return err
 	}
 
@@ -58,16 +56,12 @@ func NewAccount(scanner *bufio.Scanner, storage *AccountsStorage) (error) {
 		fmt.Printf("Сгенерирован пароль: %s\n", acc.Password)
 	}
 
-
-
 	storage.Accounts = append(storage.Accounts, *acc)
-	storage.UpdatedAt = time.Now()
-	file, err := ToBytes(storage)
+
+	err = storage.Save()
 	if err != nil {
 		return err
 	}
-
-	files.WriteFile(file, "data.json")
 	return nil
 }
 

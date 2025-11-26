@@ -5,23 +5,49 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
 
-type AccountsStorage struct {
-	Accounts []account
-	UpdatedAt time.Time `json:"updatedAt"`
+type Storage struct {
+	Accounts  []account         `json:"accounts"`
+	UpdatedAt time.Time         `json:"updatedAt"`    
+	db        *files.JsonDb    
 }
 
 
-func (storage *AccountsStorage) FindAccount() {
+
+func CreateStorage(db *files.JsonDb) *Storage {
+	data, err := db.Read()
+	if err != nil {
+		return &Storage{
+			Accounts:  []account{},
+			UpdatedAt: time.Now(),
+			db:        db,  
+		}
+	}
+	var storage Storage
+	err = json.Unmarshal(data, &storage)
+	if err != nil {
+		fmt.Println(err.Error())
+		return &Storage{
+			Accounts:  []account{},
+			UpdatedAt: time.Now(),
+			db:        db,
+		}
+	}
+
+	storage.db = db 
+	return &storage
+}
+func (storage *Storage) FindByUrl() {
 	fmt.Println("Введите url для поиска")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
-	url := scanner.Text()
+	url := strings.TrimSpace(scanner.Text())
 
 	for _, acc := range storage.Accounts {
 		if acc.Url == url {
@@ -32,60 +58,41 @@ func (storage *AccountsStorage) FindAccount() {
 	fmt.Println("Аккаунт не найден")
 }
 
-func (storage *AccountsStorage) DeleteAccount(storageName string) error {
+func (storage *Storage) DeleteByUrl() error {
 	fmt.Println("Введите url для удаления")
 	scanner := bufio.NewScanner(os.Stdin)
-    scanner.Scan()             
-    url := scanner.Text()
-
+	scanner.Scan()
+	url := strings.TrimSpace(scanner.Text()) 
+	found := false
 	for i, acc := range storage.Accounts {
-	    if acc.Url == url {  
-	        storage.Accounts = append(storage.Accounts[:i], storage.Accounts[i+1:]...)
-	        fmt.Println("Аккаунт удален:", acc)
-	        break  
-	    }
+		if acc.Url == url {
+			storage.Accounts = append(storage.Accounts[:i], storage.Accounts[i+1:]...)
+			fmt.Println("Аккаунт удален:", acc)
+			found = true
+			break
+		}
 	}
 
-	data, err := ToBytes(storage)
-	if err != nil {
-		fmt.Println("Ошибка при сериализации:", err)
-		return err
+	if !found {
+		return fmt.Errorf("аккаунт с URL %s не найден", url)
 	}
 
-	err = files.WriteFile(data, storageName)
+	return storage.Save()
+}
+
+
+
+func (storage *Storage) Save() error {
+	storage.UpdatedAt = time.Now()
+
+	data, err := json.Marshal(storage)
 	if err != nil {
-		fmt.Println("Ошибка при сохранении:", err)
-		return err
+		return fmt.Errorf("ошибка при сериализации: %w", err)
+	}
+
+	if err := storage.db.Write(data); err != nil { 
+		return fmt.Errorf("ошибка при записи: %w", err)
 	}
 
 	return nil
 }
-
-
-
-
-func CreateAccountStorage (storageName string) *AccountsStorage {
-	data, err := os.ReadFile(storageName)
-	if (err != nil) {
-		return &AccountsStorage{
-			Accounts: []account{},
-			UpdatedAt: time.Now(),
-		}
-	}
-
-	var storage AccountsStorage
-	err = json.Unmarshal(data, &storage)
-	if (err != nil) {
-		fmt.Println(err.Error())
-	}
-	return &storage
-}
-
-func ToBytes(acc *AccountsStorage) ([]byte, error) {
-	file, err := json.Marshal(acc)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
-}
-

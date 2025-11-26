@@ -8,11 +8,12 @@ import (
 	"strings"
 
 	"github.com/m4nsur/pass-generation-lrn/account"
+	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
 func RunMenu() {
 	scanner := bufio.NewScanner(os.Stdin)
-	storage := account.CreateAccountStorage("data.json")
+	storage := account.CreateStorage(files.CreateJsonDb("data.json"))
 
 	for {
 		showMenu()
@@ -33,9 +34,9 @@ func RunMenu() {
 				continue
 			}
 		case 2:
-			storage.FindAccount()
+			storage.FindByUrl()
 		case 3:
-			err := storage.DeleteAccount("data.json")
+			err := storage.DeleteByUrl()
 			if err != nil {
 				fmt.Println(err)
 				continue
