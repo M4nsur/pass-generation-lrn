@@ -7,20 +7,20 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/m4nsur/pass-generation-lrn/files"
 )
 
+type Db interface {
+	Read() ([]byte, error)
+	Write([]byte) error
+}
 
 type Storage struct {
 	Accounts  []account         `json:"accounts"`
 	UpdatedAt time.Time         `json:"updatedAt"`    
-	db        *files.JsonDb    
+	db        Db 
 }
 
-
-
-func CreateStorage(db *files.JsonDb) *Storage {
+func CreateStorage(db Db) *Storage {
 	data, err := db.Read()
 	if err != nil {
 		return &Storage{
@@ -96,3 +96,5 @@ func (storage *Storage) Save() error {
 
 	return nil
 }
+
+
