@@ -43,14 +43,21 @@ func CreateStorage(db Db) *Storage {
 	storage.db = db 
 	return &storage
 }
-func (storage *Storage) FindByUrl() {
+func (storage *Storage) FindByUrl(fieldName string) {
 	fmt.Println("Введите url для поиска")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
-	url := strings.TrimSpace(scanner.Text())
+	findElem := strings.TrimSpace(scanner.Text())
 
 	for _, acc := range storage.Accounts {
-		if acc.Url == url {
+		 var fieldValue string
+		switch strings.ToLower(fieldName) {
+		case "url":
+			acc.Url == fieldValue
+			
+		}
+
+		if acc.Url == findElem {
 			fmt.Println("Найден аккаунт:", acc)
 			return
 		}
